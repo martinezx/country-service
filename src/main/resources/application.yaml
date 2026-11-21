@@ -10,3 +10,7 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
+  http:
+    client:
+      connect-timeout: 5s
+      read-timeout: 10s

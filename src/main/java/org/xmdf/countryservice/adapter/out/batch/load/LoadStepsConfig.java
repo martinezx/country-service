@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.xmdf.countryservice.adapter.out.batch.logging.ChunkProgressListener;
+import org.xmdf.countryservice.adapter.out.batch.logging.StepProgressListener;
 import org.xmdf.countryservice.adapter.out.batch.shared.EntityPartitioner;
 import org.xmdf.countryservice.adapter.out.batch.shared.ExportEntity;
 
@@ -21,7 +23,10 @@ import org.xmdf.countryservice.adapter.out.batch.shared.ExportEntity;
 public class LoadStepsConfig {
 
   @Bean
-  public Step loadReferenceManagerStep(JobRepository jobRepository, Step loadReferenceWorkerStep) {
+  public Step loadReferenceManagerStep(
+      JobRepository jobRepository,
+      Step loadReferenceWorkerStep,
+      StepProgressListener stepProgress) {
     return new StepBuilder("loadReferenceManagerStep", jobRepository)
         .partitioner(
             "loadReferenceWorkerStep",
@@ -33,6 +38,7 @@ public class LoadStepsConfig {
         .step(loadReferenceWorkerStep)
         .gridSize(4)
         .taskExecutor(new SimpleAsyncTaskExecutor("load-"))
+        .listener(stepProgress)
         .build();
   }
 
@@ -42,11 +48,15 @@ public class LoadStepsConfig {
       PlatformTransactionManager transactionManager,
       CompletionPolicy chunkCompletionPolicy,
       FlatFileItemReader<JsonNode> loadReferenceItemReader,
-      StoreItemWriter<?, ?> loadReferenceItemWriter) {
+      StoreItemWriter<?, ?> loadReferenceItemWriter,
+      StepProgressListener stepProgress,
+      ChunkProgressListener chunkProgress) {
     return new StepBuilder("loadReferenceWorkerStep", jobRepository)
         .<JsonNode, JsonNode>chunk(chunkCompletionPolicy, transactionManager)
         .reader(loadReferenceItemReader)
         .writer(loadReferenceItemWriter)
+        .listener(stepProgress)
+        .listener(chunkProgress)
         .build();
   }
 
@@ -55,11 +65,15 @@ public class LoadStepsConfig {
       JobRepository jobRepository,
       PlatformTransactionManager transactionManager,
       FlatFileItemReader<JsonNode> loadCountryItemReader,
-      StoreItemWriter<?, ?> loadCountryItemWriter) {
+      StoreItemWriter<?, ?> loadCountryItemWriter,
+      StepProgressListener stepProgress,
+      ChunkProgressListener chunkProgress) {
     return new StepBuilder("loadCountryStep", jobRepository)
         .<JsonNode, JsonNode>chunk(CHUNK_SIZE, transactionManager)
         .reader(loadCountryItemReader)
         .writer(loadCountryItemWriter)
+        .listener(stepProgress)
+        .listener(chunkProgress)
         .build();
   }
 

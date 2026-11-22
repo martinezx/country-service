@@ -18,7 +18,7 @@ import org.xmdf.countryservice.domain.Timezone;
 
 /**
  * Maps between the domain model and the lines of the ndjson files. Missing lists are mapped to
- * empty lists.
+ * empty lists, and identifiers are left null because the mapped objects have not been stored.
  */
 @Mapper(nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface NdjsonMapper {
@@ -30,7 +30,7 @@ public interface NdjsonMapper {
    * @return the region
    */
   default Region toRegion(String name) {
-    return new Region(name);
+    return new Region(null, name);
   }
 
   /**
@@ -84,6 +84,7 @@ public interface NdjsonMapper {
    * @param line the line
    * @return the region
    */
+  @Mapping(target = "id", ignore = true)
   Region toDomain(RegionLine line);
 
   /**
@@ -92,6 +93,7 @@ public interface NdjsonMapper {
    * @param line the line
    * @return the timezone
    */
+  @Mapping(target = "id", ignore = true)
   Timezone toDomain(TimezoneLine line);
 
   /**
@@ -100,6 +102,7 @@ public interface NdjsonMapper {
    * @param line the line
    * @return the currency
    */
+  @Mapping(target = "id", ignore = true)
   Currency toDomain(CurrencyLine line);
 
   /**
@@ -108,6 +111,7 @@ public interface NdjsonMapper {
    * @param line the line
    * @return the language
    */
+  @Mapping(target = "id", ignore = true)
   Language toDomain(LanguageLine line);
 
   /**
@@ -117,6 +121,7 @@ public interface NdjsonMapper {
    * @param line the line
    * @return the country
    */
+  @Mapping(target = "id", ignore = true)
   @Mapping(target = "latitude", source = "latlng", qualifiedByName = "latitude")
   @Mapping(target = "longitude", source = "latlng", qualifiedByName = "longitude")
   Country toDomain(CountryLine line);

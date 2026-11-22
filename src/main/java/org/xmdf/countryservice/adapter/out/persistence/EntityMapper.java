@@ -15,8 +15,8 @@ import org.xmdf.countryservice.domain.Region;
 import org.xmdf.countryservice.domain.Timezone;
 
 /**
- * Copies the values of domain objects onto JPA entities. Entities are updated in place, so that
- * Hibernate can detect which ones actually changed.
+ * Maps between domain objects and JPA entities. Entities are updated in place, so that Hibernate
+ * can detect which ones actually changed.
  */
 @Mapper
 interface EntityMapper {
@@ -64,4 +64,45 @@ interface EntityMapper {
   @Mapping(target = "currencies", ignore = true)
   @Mapping(target = "languages", ignore = true)
   void update(Country country, @MappingTarget CountryEntity entity);
+
+  /**
+   * Maps a region entity to a region.
+   *
+   * @param entity the entity
+   * @return the region
+   */
+  Region toDomain(RegionEntity entity);
+
+  /**
+   * Maps a timezone entity to a timezone.
+   *
+   * @param entity the entity
+   * @return the timezone
+   */
+  Timezone toDomain(TimezoneEntity entity);
+
+  /**
+   * Maps a currency entity to a currency.
+   *
+   * @param entity the entity
+   * @return the currency
+   */
+  Currency toDomain(CurrencyEntity entity);
+
+  /**
+   * Maps a language entity to a language.
+   *
+   * @param entity the entity
+   * @return the language
+   */
+  Language toDomain(LanguageEntity entity);
+
+  /**
+   * Maps a country entity to a country, including its region, currencies and languages. The
+   * entity's associations must be loadable, so this must be called within a transaction.
+   *
+   * @param entity the entity
+   * @return the country
+   */
+  Country toDomain(CountryEntity entity);
 }

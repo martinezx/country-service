@@ -1,6 +1,9 @@
 package org.xmdf.countryservice.application.port.out;
 
 import java.util.Collection;
+import java.util.Optional;
+import org.xmdf.countryservice.application.model.PageQuery;
+import org.xmdf.countryservice.application.model.PagedResult;
 import org.xmdf.countryservice.domain.Timezone;
 
 /** Storage for {@link Timezone timezones}. */
@@ -15,4 +18,20 @@ public interface TimezoneRepository {
    * @param timezones the timezones to store
    */
   void upsertAll(Collection<Timezone> timezones);
+
+  /**
+   * Finds a page of timezones.
+   *
+   * @param query the page to return
+   * @return the page, with the timezones ordered by their identifier
+   */
+  PagedResult<Timezone> findAll(PageQuery query);
+
+  /**
+   * Finds a timezone by its identifier.
+   *
+   * @param id the identifier of the timezone
+   * @return the timezone, or empty if there is none with that identifier
+   */
+  Optional<Timezone> findById(Long id);
 }

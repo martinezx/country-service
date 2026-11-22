@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.lang.Nullable;
 
 public class CountriesSourceItemReader implements ItemReader<JsonNode> {
 
@@ -30,6 +31,7 @@ public class CountriesSourceItemReader implements ItemReader<JsonNode> {
   }
 
   @Override
+  @Nullable
   public JsonNode read() {
     while (current == null || !current.hasNext()) {
       if (exhausted) {

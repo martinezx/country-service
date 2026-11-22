@@ -17,7 +17,7 @@ import org.xmdf.countryservice.domain.Timezone;
 
 /**
  * Maps the countries.dev response types to the domain model. Missing lists are mapped to empty
- * lists.
+ * lists, and identifiers are left null because the mapped objects have not been stored.
  */
 @Mapper(nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 interface CountriesRestMapper {
@@ -29,7 +29,7 @@ interface CountriesRestMapper {
    * @return the region
    */
   default Region toRegion(String name) {
-    return new Region(name);
+    return new Region(null, name);
   }
 
   /**
@@ -78,6 +78,7 @@ interface CountriesRestMapper {
    * @param timezone the timezone response
    * @return the timezone
    */
+  @Mapping(target = "id", ignore = true)
   Timezone toTimezone(TimezoneRestDto timezone);
 
   /**
@@ -86,6 +87,7 @@ interface CountriesRestMapper {
    * @param currency the currency response
    * @return the currency
    */
+  @Mapping(target = "id", ignore = true)
   Currency toCurrency(CurrencyRestDto currency);
 
   /**
@@ -94,6 +96,7 @@ interface CountriesRestMapper {
    * @param language the language response
    * @return the language
    */
+  @Mapping(target = "id", ignore = true)
   Language toLanguage(LanguageRestDto language);
 
   /**
@@ -103,6 +106,7 @@ interface CountriesRestMapper {
    * @param country the country response
    * @return the country
    */
+  @Mapping(target = "id", ignore = true)
   @Mapping(target = "latitude", source = "latlng", qualifiedByName = "latitude")
   @Mapping(target = "longitude", source = "latlng", qualifiedByName = "longitude")
   Country toCountry(CountryRestDto country);

@@ -9,6 +9,9 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        default_batch_fetch_size: 50
     hibernate:
       ddl-auto: validate
   flyway:
@@ -23,3 +26,9 @@ spring:
     client:
       connect-timeout: 5s
       read-timeout: 10s
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    path: /api-docs

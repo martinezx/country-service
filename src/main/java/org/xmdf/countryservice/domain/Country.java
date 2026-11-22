@@ -5,7 +5,8 @@ import java.util.List;
 /**
  * A country or territory.
  *
- * @param alpha2Code the ISO 3166-1 alpha-2 code, which identifies the country
+ * @param id the identifier assigned when the country is stored, or null if it has not been stored
+ * @param alpha2Code the ISO 3166-1 alpha-2 code, which identifies the country among the countries
  * @param alpha3Code the ISO 3166-1 alpha-3 code
  * @param numericCode the ISO 3166-1 numeric code, as a string with leading zeros preserved
  * @param name the name of the country
@@ -16,6 +17,7 @@ import java.util.List;
  * @param languages the languages spoken in the country, empty if there are none
  */
 public record Country(
+    Long id,
     String alpha2Code,
     String alpha3Code,
     String numericCode,

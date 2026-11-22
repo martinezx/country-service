@@ -6,9 +6,12 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.xmdf.countryservice.adapter.out.persistence.entity.CountryEntity;
@@ -19,6 +22,8 @@ import org.xmdf.countryservice.adapter.out.persistence.repository.CountryJpaRepo
 import org.xmdf.countryservice.adapter.out.persistence.repository.CurrencyJpaRepository;
 import org.xmdf.countryservice.adapter.out.persistence.repository.LanguageJpaRepository;
 import org.xmdf.countryservice.adapter.out.persistence.repository.RegionJpaRepository;
+import org.xmdf.countryservice.application.model.PageQuery;
+import org.xmdf.countryservice.application.model.PagedResult;
 import org.xmdf.countryservice.application.port.out.CountryRepository;
 import org.xmdf.countryservice.domain.Country;
 import org.xmdf.countryservice.domain.Currency;
@@ -90,6 +95,48 @@ class CountryRepositoryAdapter implements CountryRepository {
       }
     });
     entityManager.flush();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Country> findAll(PageQuery query) {
+    return PagedResults.of(countries.findAll(pageRequest(query)), mapper::toDomain);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Optional<Country> findById(Long id) {
+    return countries.findById(id).map(mapper::toDomain);
+  }
+
+  @Override
+  public boolean existsById(Long id) {
+    return countries.existsById(id);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Country> findByRegionId(Long regionId, PageQuery query) {
+    return PagedResults.of(
+        countries.findByRegionId(regionId, pageRequest(query)), mapper::toDomain);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Country> findByCurrencyId(Long currencyId, PageQuery query) {
+    return PagedResults.of(
+        countries.findByCurrenciesId(currencyId, pageRequest(query)), mapper::toDomain);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Country> findByLanguageId(Long languageId, PageQuery query) {
+    return PagedResults.of(
+        countries.findByLanguagesId(languageId, pageRequest(query)), mapper::toDomain);
+  }
+
+  private static PageRequest pageRequest(PageQuery query) {
+    return PageRequest.of(query.page(), query.size(), Sort.by("alpha2Code"));
   }
 
   private void map(Country country, CountryEntity entity, Map<String, RegionEntity> regionsByName) {

@@ -10,6 +10,7 @@ The service exposes a **read-only, hypermedia REST API** built with [Spring HATE
 - [Pagination](#pagination)
 - [Errors](#errors)
 - [OpenAPI specification](#openapi-specification)
+- [Health endpoints](#health-endpoints)
 
 ## Conventions
 
@@ -214,3 +215,21 @@ How it is built, if you need to change it:
 - Declaring any `@ApiResponse` on an operation makes springdoc stop generating the default `200`, which is why those annotations list it.
 - `OpenApiConfig` holds the API title and version, the paging parameter description and the tag and path order.
 - In the generated document, `_links` is a generic map from relation name to link. The relations of each resource are documented in [Links](#links) above, not in the specification.
+
+## Health endpoints
+
+Spring Boot Actuator exposes the health endpoints, and nothing else. They are **not part of the HAL API**: responses are plain Actuator JSON, they have no links, and they are not in the OpenAPI specification. They have **no authentication**, and details are hidden, so the body only carries the status (and, on `/actuator/health`, the names of the groups).
+
+| Endpoint | Meaning | Status codes |
+|---|---|---|
+| `GET /actuator/health` | Overall status | `200` when `UP`, `503` when the database is down |
+| `GET /actuator/health/liveness` | The process is running. Does not depend on the database. | `200` |
+| `GET /actuator/health/readiness` | Ready to serve requests. Includes the database check. | `200` when `UP`, `503` otherwise |
+
+```json
+{ "status": "UP", "groups": ["liveness", "readiness"] }
+```
+
+The `liveness` and `readiness` endpoints answer only `{ "status": "UP" }`.
+
+The Docker Compose healthcheck of the `country-service` service calls `/actuator/health`.

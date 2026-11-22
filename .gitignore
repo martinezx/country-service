@@ -36,3 +36,5 @@ build/
 ### Other ###
 application-local.yaml
 output/
+.env
+.agents

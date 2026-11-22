@@ -39,6 +39,8 @@ Other things to keep in mind:
 | Mapping | MapStruct 1.6 |
 | Boilerplate | Lombok |
 | Development database | H2 (in memory, PostgreSQL mode) |
+| Health checks | Spring Boot Actuator (`health` endpoint only) |
+| Packaging | Docker (multi-stage build), Docker Compose |
 
 ## Architecture
 
@@ -102,9 +104,11 @@ The schema is created by Flyway from `src/main/resources/db/migration`, and the 
 
 **Requirements:** JDK 21 and Maven 3.9 or newer. There is no Maven wrapper.
 
+`mvn clean package` compiles, runs the tests and builds `target/country-service-0.0.1-SNAPSHOT.jar`. `mvn test` runs the tests only.
+
 ```bash
-mvn clean package        # compile, run the tests and build target/country-service-0.0.1-SNAPSHOT.jar
-mvn test                 # tests only
+mvn clean package
+mvn test
 ```
 
 ### Run in development mode (no database needed)
@@ -117,7 +121,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 ### Run against PostgreSQL
 
-Start a database, for example with Docker:
+Start a database, for example with Docker (to run both the database and the application in containers, see [Run with Docker](#run-with-docker)):
 
 ```bash
 docker run --rm --name countries-db -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=countries -p 5432:5432 postgres:17
@@ -134,14 +138,74 @@ mvn spring-boot:run
 
 The first start creates the schema with Flyway. A database created by an earlier revision of the migration has to be dropped and recreated, because the initial migration has been edited in place during development.
 
+### Run with Docker
+
+The repository contains a multi-stage `Dockerfile` and a `docker-compose.yml`. The image is built with Maven inside Docker, so only Docker is needed on the machine. It uses Alpine based Java 21 images and runs as a non-root user.
+
+**With Docker Compose (application and PostgreSQL).** Copy the example settings, optionally edit the password, then build and start both containers:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+`.env` holds `DB_NAME`, `DB_USERNAME` and `DB_PASSWORD`. Compose uses them for both the database and the application. The application starts after PostgreSQL reports healthy, listens on port 8080 and has Swagger UI enabled at <http://localhost:8080/api-docs>. Load the data as described in [Try it](#try-it).
+
+To run in the background, add `-d` to the `up` command and follow the logs with `docker compose logs -f country-service`. Compose builds the image as `country-service`, the same tag the image-only run below uses. If you built an image with an earlier Compose file, remove the old one with `docker rmi country-service-country-service`.
+
+Two named volumes keep state between runs:
+
+| Volume | Mounted at | Contents |
+|---|---|---|
+| `postgres-data` | `/var/lib/postgresql/data` in `country-service-db` | The database |
+| `export-output` | `/app/output` in `country-service` | The ndjson files written by the refresh |
+
+Stop and remove the containers, keeping the volumes, or remove the volumes too:
+
+```bash
+docker compose down
+docker compose down -v
+```
+
+**Only the image.** Build it and start it with the in-memory H2 database of the `dev` profile. No database container is needed, and the data is lost when the container stops:
+
+```bash
+docker build -t country-service .
+docker run --rm -p 8080:8080 -e SPRING_PROFILES_ACTIVE=dev country-service
+```
+
+To use your own PostgreSQL instead, pass `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME` and `DB_PASSWORD` with `-e`. To run without Docker, see [Run in development mode](#run-in-development-mode-no-database-needed) and [Run against PostgreSQL](#run-against-postgresql).
+
+Without the buildx plugin, Docker prints a deprecation warning about the legacy builder. The build still works.
+
+### Health checks
+
+Spring Boot Actuator exposes only the health endpoints, without details and without authentication. They are not part of the HAL API or the OpenAPI specification. See [docs/api.md](docs/api.md#health-endpoints).
+
+| Endpoint | Meaning |
+|---|---|
+| `/actuator/health` | Overall status. `503` when the database is down. Used by the Compose healthcheck of `country-service`. |
+| `/actuator/health/liveness` | The process is running. Does not depend on the database. |
+| `/actuator/health/readiness` | The application can serve requests. Includes the database. |
+
+```bash
+curl http://localhost:8080/actuator/health
+curl http://localhost:8080/actuator/health/liveness
+curl http://localhost:8080/actuator/health/readiness
+docker compose ps
+```
+
 ### Try it
 
 The application listens on port 8080. Load the data, then browse it:
 
+The first command starts the refresh and answers `202`. The second is the entry point, which links to everything else. The last one reads the first five countries. The refresh runs in the background, so wait a few seconds before reading.
+
 ```bash
-curl -X POST http://localhost:8080/jobs/data-refresh    # starts the refresh, answers 202
-curl http://localhost:8080/                             # entry point, follow the links
+curl -X POST http://localhost:8080/jobs/data-refresh
+curl http://localhost:8080/
 curl "http://localhost:8080/countries?size=5"
+curl http://localhost:8080/actuator/health
 ```
 
 The OpenAPI specification and Swagger UI are described in [docs/api.md](docs/api.md#openapi-specification). With the `dev` profile, Swagger UI is at <http://localhost:8080/api-docs>.

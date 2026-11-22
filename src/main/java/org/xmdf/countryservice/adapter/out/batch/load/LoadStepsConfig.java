@@ -14,10 +14,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.xmdf.countryservice.adapter.out.batch.errors.DataErrorSkipPolicy;
+import org.xmdf.countryservice.adapter.out.batch.errors.SkippedRecordListener;
 import org.xmdf.countryservice.adapter.out.batch.logging.ChunkProgressListener;
 import org.xmdf.countryservice.adapter.out.batch.logging.StepProgressListener;
 import org.xmdf.countryservice.adapter.out.batch.shared.EntityPartitioner;
 import org.xmdf.countryservice.adapter.out.batch.shared.ExportEntity;
+import org.xmdf.countryservice.adapter.out.batch.shared.StepNames;
 
 @Configuration
 public class LoadStepsConfig {
@@ -27,9 +30,9 @@ public class LoadStepsConfig {
       JobRepository jobRepository,
       Step loadReferenceWorkerStep,
       StepProgressListener stepProgress) {
-    return new StepBuilder("loadReferenceManagerStep", jobRepository)
+    return new StepBuilder(StepNames.LOAD_REFERENCE_MANAGER, jobRepository)
         .partitioner(
-            "loadReferenceWorkerStep",
+            StepNames.LOAD_REFERENCE_WORKER,
             new EntityPartitioner(
                 ExportEntity.REGION,
                 ExportEntity.TIMEZONE,
@@ -50,13 +53,18 @@ public class LoadStepsConfig {
       FlatFileItemReader<JsonNode> loadReferenceItemReader,
       StoreItemWriter<?, ?> loadReferenceItemWriter,
       StepProgressListener stepProgress,
-      ChunkProgressListener chunkProgress) {
-    return new StepBuilder("loadReferenceWorkerStep", jobRepository)
+      ChunkProgressListener chunkProgress,
+      DataErrorSkipPolicy skipPolicy,
+      SkippedRecordListener skippedRecords) {
+    return new StepBuilder(StepNames.LOAD_REFERENCE_WORKER, jobRepository)
         .<JsonNode, JsonNode>chunk(chunkCompletionPolicy, transactionManager)
         .reader(loadReferenceItemReader)
         .writer(loadReferenceItemWriter)
-        .listener(stepProgress)
+        .faultTolerant()
+        .skipPolicy(skipPolicy)
+        .listener(skippedRecords)
         .listener(chunkProgress)
+        .listener(stepProgress)
         .build();
   }
 
@@ -67,13 +75,18 @@ public class LoadStepsConfig {
       FlatFileItemReader<JsonNode> loadCountryItemReader,
       StoreItemWriter<?, ?> loadCountryItemWriter,
       StepProgressListener stepProgress,
-      ChunkProgressListener chunkProgress) {
-    return new StepBuilder("loadCountryStep", jobRepository)
+      ChunkProgressListener chunkProgress,
+      DataErrorSkipPolicy skipPolicy,
+      SkippedRecordListener skippedRecords) {
+    return new StepBuilder(StepNames.LOAD_COUNTRY, jobRepository)
         .<JsonNode, JsonNode>chunk(CHUNK_SIZE, transactionManager)
         .reader(loadCountryItemReader)
         .writer(loadCountryItemWriter)
-        .listener(stepProgress)
+        .faultTolerant()
+        .skipPolicy(skipPolicy)
+        .listener(skippedRecords)
         .listener(chunkProgress)
+        .listener(stepProgress)
         .build();
   }
 

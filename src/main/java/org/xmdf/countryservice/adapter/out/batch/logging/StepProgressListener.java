@@ -18,14 +18,15 @@ public class StepProgressListener implements StepExecutionListener {
 
   @Override
   public ExitStatus afterStep(StepExecution step) {
-    long failed = step.getReadCount() - step.getWriteCount() - step.getFilterCount();
+    long processed = step.getReadCount() + step.getReadSkipCount();
+    long failed = processed - step.getWriteCount() - step.getFilterCount();
     log.info(
         "Step {} {} in {} ms: processed={}, successful={}, failed={}, filtered={}, commits={},"
             + " rollbacks={}",
         step.getStepName(),
         step.getStatus(),
         Duration.between(step.getStartTime(), step.getEndTime()).toMillis(),
-        step.getReadCount(),
+        processed,
         step.getWriteCount(),
         failed,
         step.getFilterCount(),

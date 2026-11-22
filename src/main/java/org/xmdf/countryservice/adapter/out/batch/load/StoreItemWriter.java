@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.xmdf.countryservice.application.exception.InvalidRecordException;
 
 public class StoreItemWriter<L, D> implements ItemWriter<JsonNode> {
 
@@ -36,7 +37,7 @@ public class StoreItemWriter<L, D> implements ItemWriter<JsonNode> {
     try {
       return objectMapper.treeToValue(node, lineType);
     } catch (JsonProcessingException e) {
-      throw new IllegalStateException(
+      throw new InvalidRecordException(
           "Invalid %s line: %s".formatted(lineType.getSimpleName(), node), e);
     }
   }

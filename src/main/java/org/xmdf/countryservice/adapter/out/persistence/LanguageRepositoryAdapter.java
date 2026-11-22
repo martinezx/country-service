@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.xmdf.countryservice.adapter.out.persistence.entity.LanguageEntity;
 import org.xmdf.countryservice.adapter.out.persistence.repository.LanguageJpaRepository;
@@ -14,7 +14,7 @@ import org.xmdf.countryservice.application.model.PagedResult;
 import org.xmdf.countryservice.application.port.out.LanguageRepository;
 import org.xmdf.countryservice.domain.Language;
 
-@Component
+@Repository
 class LanguageRepositoryAdapter implements LanguageRepository {
 
   private final LanguageJpaRepository jpa;

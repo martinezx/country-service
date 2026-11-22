@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.xmdf.countryservice.adapter.out.persistence.entity.CountryEntity;
 import org.xmdf.countryservice.adapter.out.persistence.entity.CurrencyEntity;
@@ -24,6 +24,7 @@ import org.xmdf.countryservice.adapter.out.persistence.repository.CurrencyJpaRep
 import org.xmdf.countryservice.adapter.out.persistence.repository.LanguageJpaRepository;
 import org.xmdf.countryservice.adapter.out.persistence.repository.RegionJpaRepository;
 import org.xmdf.countryservice.adapter.out.persistence.repository.TimezoneJpaRepository;
+import org.xmdf.countryservice.application.exception.InvalidRecordException;
 import org.xmdf.countryservice.application.model.PageQuery;
 import org.xmdf.countryservice.application.model.PagedResult;
 import org.xmdf.countryservice.application.port.out.CountryRepository;
@@ -32,7 +33,7 @@ import org.xmdf.countryservice.domain.Currency;
 import org.xmdf.countryservice.domain.Language;
 import org.xmdf.countryservice.domain.Timezone;
 
-@Component
+@Repository
 class CountryRepositoryAdapter implements CountryRepository {
 
   private final EntityManager entityManager;
@@ -162,7 +163,7 @@ class CountryRepositoryAdapter implements CountryRepository {
   private void map(Country country, CountryEntity entity, Map<String, RegionEntity> regionsByName) {
     RegionEntity region = regionsByName.get(country.region().name());
     if (region == null) {
-      throw new IllegalStateException(
+      throw new InvalidRecordException(
           "Region '%s' of country %s does not exist"
               .formatted(country.region().name(), country.alpha2Code()));
     }
@@ -174,7 +175,7 @@ class CountryRepositoryAdapter implements CountryRepository {
       Currency currency, Map<String, CurrencyEntity> currenciesByCode) {
     CurrencyEntity entity = currenciesByCode.get(currency.code());
     if (entity == null) {
-      throw new IllegalStateException("Currency '%s' does not exist".formatted(currency.code()));
+      throw new InvalidRecordException("Currency '%s' does not exist".formatted(currency.code()));
     }
     return entity;
   }
@@ -183,7 +184,7 @@ class CountryRepositoryAdapter implements CountryRepository {
       Timezone timezone, Map<String, TimezoneEntity> timezonesById) {
     TimezoneEntity entity = timezonesById.get(timezone.timezone());
     if (entity == null) {
-      throw new IllegalStateException(
+      throw new InvalidRecordException(
           "Timezone '%s' does not exist".formatted(timezone.timezone()));
     }
     return entity;

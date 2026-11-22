@@ -5,14 +5,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.xmdf.countryservice.adapter.out.persistence.entity.RegionEntity;
 import org.xmdf.countryservice.adapter.out.persistence.repository.RegionJpaRepository;
 import org.xmdf.countryservice.application.port.out.RegionRepository;
 import org.xmdf.countryservice.domain.Region;
 
-@Component
+@Repository
 class RegionRepositoryAdapter implements RegionRepository {
 
   private final RegionJpaRepository jpa;

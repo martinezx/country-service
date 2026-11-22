@@ -2,6 +2,7 @@ package org.xmdf.countryservice.application.port.out;
 
 import java.util.Collection;
 import java.util.Optional;
+import org.xmdf.countryservice.application.exception.InvalidRecordException;
 import org.xmdf.countryservice.application.model.PageQuery;
 import org.xmdf.countryservice.application.model.PagedResult;
 import org.xmdf.countryservice.domain.Country;
@@ -22,8 +23,9 @@ public interface CountryRepository {
    * removed.
    *
    * @param countries the countries to store
-   * @throws IllegalStateException if the region, a currency or a timezone of a country is not
-   *     stored
+   * @throws InvalidRecordException if the region, a currency or a timezone of a country is not
+   *     stored. No country is stored partially: a country is stored with all its links or not at
+   *     all.
    */
   void upsertAll(Collection<Country> countries);
 

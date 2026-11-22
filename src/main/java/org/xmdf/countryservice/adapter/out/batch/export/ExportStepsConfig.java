@@ -22,6 +22,7 @@ import org.xmdf.countryservice.adapter.out.batch.logging.StepProgressListener;
 import org.xmdf.countryservice.adapter.out.batch.ndjson.NdjsonMapper;
 import org.xmdf.countryservice.adapter.out.batch.shared.EntityPartitioner;
 import org.xmdf.countryservice.adapter.out.batch.shared.ExportEntity;
+import org.xmdf.countryservice.adapter.out.batch.shared.StepNames;
 import org.xmdf.countryservice.application.port.out.CountriesSource;
 
 @Configuration
@@ -30,8 +31,8 @@ public class ExportStepsConfig {
   @Bean
   public Step exportManagerStep(
       JobRepository jobRepository, Step exportWorkerStep, StepProgressListener stepProgress) {
-    return new StepBuilder("exportManagerStep", jobRepository)
-        .partitioner("exportWorkerStep", new EntityPartitioner(ExportEntity.values()))
+    return new StepBuilder(StepNames.EXPORT_MANAGER, jobRepository)
+        .partitioner(StepNames.EXPORT_WORKER, new EntityPartitioner(ExportEntity.values()))
         .step(exportWorkerStep)
         .gridSize(ExportEntity.values().length)
         .taskExecutor(new SimpleAsyncTaskExecutor("export-"))
@@ -48,7 +49,7 @@ public class ExportStepsConfig {
       FlatFileItemWriter<JsonNode> exportItemWriter,
       StepProgressListener stepProgress,
       ChunkProgressListener chunkProgress) {
-    return new StepBuilder("exportWorkerStep", jobRepository)
+    return new StepBuilder(StepNames.EXPORT_WORKER, jobRepository)
         .<JsonNode, JsonNode>chunk(chunkCompletionPolicy, transactionManager)
         .reader(exportItemReader)
         .writer(exportItemWriter)

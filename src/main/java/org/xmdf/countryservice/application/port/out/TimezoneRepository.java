@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.xmdf.countryservice.application.model.PageQuery;
 import org.xmdf.countryservice.application.model.PagedResult;
 import org.xmdf.countryservice.domain.Timezone;
+import org.xmdf.countryservice.domain.UnsupportedTimezoneException;
 
 /** Storage for {@link Timezone timezones}. */
 public interface TimezoneRepository {
@@ -16,6 +17,7 @@ public interface TimezoneRepository {
    * one wins.
    *
    * @param timezones the timezones to store
+   * @throws UnsupportedTimezoneException if the identifier of a timezone is not supported
    */
   void upsertAll(Collection<Timezone> timezones);
 

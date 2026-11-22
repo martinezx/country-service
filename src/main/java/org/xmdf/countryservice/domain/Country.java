@@ -15,6 +15,7 @@ import java.util.List;
  * @param longitude the longitude of the country, or null if its location is unknown
  * @param currencies the currencies used in the country, empty if there are none
  * @param languages the languages spoken in the country, empty if there are none
+ * @param timezones the timezones of the country, empty if there are none
  */
 public record Country(
     Long id,
@@ -26,4 +27,5 @@ public record Country(
     Double latitude,
     Double longitude,
     List<Currency> currencies,
-    List<Language> languages) {}
+    List<Language> languages,
+    List<Timezone> timezones) {}

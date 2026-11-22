@@ -18,16 +18,19 @@ import org.xmdf.countryservice.adapter.out.persistence.entity.CountryEntity;
 import org.xmdf.countryservice.adapter.out.persistence.entity.CurrencyEntity;
 import org.xmdf.countryservice.adapter.out.persistence.entity.LanguageEntity;
 import org.xmdf.countryservice.adapter.out.persistence.entity.RegionEntity;
+import org.xmdf.countryservice.adapter.out.persistence.entity.TimezoneEntity;
 import org.xmdf.countryservice.adapter.out.persistence.repository.CountryJpaRepository;
 import org.xmdf.countryservice.adapter.out.persistence.repository.CurrencyJpaRepository;
 import org.xmdf.countryservice.adapter.out.persistence.repository.LanguageJpaRepository;
 import org.xmdf.countryservice.adapter.out.persistence.repository.RegionJpaRepository;
+import org.xmdf.countryservice.adapter.out.persistence.repository.TimezoneJpaRepository;
 import org.xmdf.countryservice.application.model.PageQuery;
 import org.xmdf.countryservice.application.model.PagedResult;
 import org.xmdf.countryservice.application.port.out.CountryRepository;
 import org.xmdf.countryservice.domain.Country;
 import org.xmdf.countryservice.domain.Currency;
 import org.xmdf.countryservice.domain.Language;
+import org.xmdf.countryservice.domain.Timezone;
 
 @Component
 class CountryRepositoryAdapter implements CountryRepository {
@@ -38,6 +41,7 @@ class CountryRepositoryAdapter implements CountryRepository {
   private final RegionJpaRepository regions;
   private final CurrencyJpaRepository currencies;
   private final LanguageJpaRepository languages;
+  private final TimezoneJpaRepository timezones;
 
   CountryRepositoryAdapter(
       EntityManager entityManager,
@@ -45,13 +49,15 @@ class CountryRepositoryAdapter implements CountryRepository {
       CountryJpaRepository countries,
       RegionJpaRepository regions,
       CurrencyJpaRepository currencies,
-      LanguageJpaRepository languages) {
+      LanguageJpaRepository languages,
+      TimezoneJpaRepository timezones) {
     this.entityManager = entityManager;
     this.mapper = mapper;
     this.countries = countries;
     this.regions = regions;
     this.currencies = currencies;
     this.languages = languages;
+    this.timezones = timezones;
   }
 
   @Override
@@ -61,11 +67,13 @@ class CountryRepositoryAdapter implements CountryRepository {
     Set<String> regionNames = new HashSet<>();
     Set<String> currencyCodes = new HashSet<>();
     Set<String> languageCodes = new HashSet<>();
+    Set<String> timezoneIds = new HashSet<>();
     for (Country country : items) {
       byAlpha2Code.put(country.alpha2Code(), country);
       regionNames.add(country.region().name());
       country.currencies().forEach(c -> currencyCodes.add(c.code()));
       country.languages().forEach(l -> languageCodes.add(l.iso6392()));
+      country.timezones().forEach(t -> timezoneIds.add(t.timezone()));
     }
 
     Map<String, CountryEntity> existing =
@@ -76,6 +84,8 @@ class CountryRepositoryAdapter implements CountryRepository {
         index(currencies.findByCodeIn(currencyCodes), CurrencyEntity::getCode);
     Map<String, LanguageEntity> languagesByCode =
         index(languages.findByIso6392In(languageCodes), LanguageEntity::getIso6392);
+    Map<String, TimezoneEntity> timezonesById =
+        index(timezones.findByTimezoneIn(timezoneIds), TimezoneEntity::getTimezone);
 
     byAlpha2Code.forEach((alpha2Code, country) -> {
       CountryEntity entity = existing.get(alpha2Code);
@@ -89,6 +99,9 @@ class CountryRepositoryAdapter implements CountryRepository {
       }
       for (Language language : country.languages()) {
         entity.getLanguages().add(languageEntity(language, languagesByCode));
+      }
+      for (Timezone timezone : country.timezones()) {
+        entity.getTimezones().add(timezoneEntity(timezone, timezonesById));
       }
       if (isNew) {
         entityManager.persist(entity);
@@ -119,6 +132,13 @@ class CountryRepositoryAdapter implements CountryRepository {
   public PagedResult<Country> findByRegionId(Long regionId, PageQuery query) {
     return PagedResults.of(
         countries.findByRegionId(regionId, pageRequest(query)), mapper::toDomain);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Country> findByTimezoneId(Long timezoneId, PageQuery query) {
+    return PagedResults.of(
+        countries.findByTimezonesId(timezoneId, pageRequest(query)), mapper::toDomain);
   }
 
   @Override
@@ -155,6 +175,16 @@ class CountryRepositoryAdapter implements CountryRepository {
     CurrencyEntity entity = currenciesByCode.get(currency.code());
     if (entity == null) {
       throw new IllegalStateException("Currency '%s' does not exist".formatted(currency.code()));
+    }
+    return entity;
+  }
+
+  private static TimezoneEntity timezoneEntity(
+      Timezone timezone, Map<String, TimezoneEntity> timezonesById) {
+    TimezoneEntity entity = timezonesById.get(timezone.timezone());
+    if (entity == null) {
+      throw new IllegalStateException(
+          "Timezone '%s' does not exist".formatted(timezone.timezone()));
     }
     return entity;
   }

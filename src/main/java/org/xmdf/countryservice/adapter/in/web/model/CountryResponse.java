@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.hateoas.server.core.Relation;
 
 /**
- * Representation of a country. Its region, currencies and languages are not part of the
+ * Representation of a country. Its region, currencies, languages and timezones are not part of the
  * representation, they are reachable through its links.
  *
  * @param id the identifier of the country, used in the URLs of the API

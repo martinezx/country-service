@@ -24,6 +24,8 @@ public class TimezoneModelAssembler
   public EntityModel<TimezoneResponse> toModel(Timezone timezone) {
     return EntityModel.of(
         mapper.toResponse(timezone),
-        linkTo(methodOn(TimezoneController.class).get(timezone.id())).withSelfRel());
+        linkTo(methodOn(TimezoneController.class).get(timezone.id())).withSelfRel(),
+        linkTo(methodOn(TimezoneController.class).countries(timezone.id(), null, null))
+            .withRel(LinkRels.COUNTRIES));
   }
 }

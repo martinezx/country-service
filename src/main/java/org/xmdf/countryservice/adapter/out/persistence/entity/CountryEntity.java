@@ -54,4 +54,11 @@ public class CountryEntity extends BaseEntity {
       joinColumns = @JoinColumn(name = "country_id"),
       inverseJoinColumns = @JoinColumn(name = "language_id"))
   private Set<LanguageEntity> languages = new LinkedHashSet<>();
+
+  @ManyToMany
+  @JoinTable(
+      name = "country_timezone",
+      joinColumns = @JoinColumn(name = "country_id"),
+      inverseJoinColumns = @JoinColumn(name = "timezone_id"))
+  private Set<TimezoneEntity> timezones = new LinkedHashSet<>();
 }

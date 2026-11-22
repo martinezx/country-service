@@ -10,9 +10,11 @@ CREATE TABLE region
 CREATE TABLE timezone
 (
     id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    timezone   VARCHAR(32)              NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    timezone           VARCHAR(32)              NOT NULL,
+    utc_offset         VARCHAR(6)               NOT NULL,
+    utc_offset_minutes INTEGER                  NOT NULL,
+    created_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_timezone_timezone UNIQUE (timezone)
 );
 
@@ -85,3 +87,17 @@ CREATE TABLE country_language
 );
 
 CREATE INDEX idx_country_language_language_id ON country_language (language_id);
+
+CREATE TABLE country_timezone
+(
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    country_id  BIGINT                   NOT NULL,
+    timezone_id BIGINT                   NOT NULL,
+    created_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_country_timezone UNIQUE (country_id, timezone_id),
+    CONSTRAINT fk_country_timezone_country FOREIGN KEY (country_id) REFERENCES country (id),
+    CONSTRAINT fk_country_timezone_timezone FOREIGN KEY (timezone_id) REFERENCES timezone (id)
+);
+
+CREATE INDEX idx_country_timezone_timezone_id ON country_timezone (timezone_id);

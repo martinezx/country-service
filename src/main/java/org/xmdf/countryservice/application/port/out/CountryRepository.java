@@ -15,13 +15,15 @@ public interface CountryRepository {
    * Stored countries that are not in the collection are left untouched. If the collection contains
    * several countries with the same alpha-2 code, the last one wins.
    *
-   * <p>The region and the currencies of each country must already be stored. Languages that are not
-   * stored yet are created from the country's data, because the languages offered by the source do
-   * not include every language that countries reference. Existing languages are not modified. Links
-   * are only added: a link that is missing from a country is not removed.
+   * <p>The region, the currencies and the timezones of each country must already be stored.
+   * Languages that are not stored yet are created from the country's data, because the languages
+   * offered by the source do not include every language that countries reference. Existing
+   * languages are not modified. Links are only added: a link that is missing from a country is not
+   * removed.
    *
    * @param countries the countries to store
-   * @throws IllegalStateException if the region or a currency of a country is not stored
+   * @throws IllegalStateException if the region, a currency or a timezone of a country is not
+   *     stored
    */
   void upsertAll(Collection<Country> countries);
 
@@ -58,6 +60,16 @@ public interface CountryRepository {
    *     not exist or has no countries.
    */
   PagedResult<Country> findByRegionId(Long regionId, PageQuery query);
+
+  /**
+   * Finds a page of the countries that use a timezone.
+   *
+   * @param timezoneId the identifier of the timezone
+   * @param query the page to return
+   * @return the page, with the countries ordered by alpha-2 code. It is empty if the timezone does
+   *     not exist or is used by no country.
+   */
+  PagedResult<Country> findByTimezoneId(Long timezoneId, PageQuery query);
 
   /**
    * Finds a page of the countries that use a currency.

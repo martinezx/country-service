@@ -60,11 +60,12 @@ public class OpenApiConfig {
             tag(ApiTags.ROOT, "Entry point of the API."),
             tag(
                 ApiTags.COUNTRIES,
-                "Countries and territories. Their region, currencies and languages are links."),
+                "Countries and territories. Their region, currencies, languages and timezones"
+                    + " are links."),
             tag(ApiTags.CURRENCIES, "Currencies and the countries that use them."),
             tag(ApiTags.LANGUAGES, "Languages and the countries where they are spoken."),
             tag(ApiTags.REGIONS, "Geographic regions, such as Europe or Asia."),
-            tag(ApiTags.TIMEZONES, "Timezones. They are not linked to countries."));
+            tag(ApiTags.TIMEZONES, "Timezones and the countries that use them."));
     List<String> order = tags.stream().map(Tag::getName).toList();
     return openApi -> {
       openApi.setTags(tags);

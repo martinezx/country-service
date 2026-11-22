@@ -38,7 +38,7 @@ public class CountriesRestClient {
   }
 
   public List<TimezoneRestDto> getTimezones() {
-    return get("/timezones", null, null, null, null, new ParameterizedTypeReference<>() {});
+    return get("/timezones", "timezone", null, null, null, new ParameterizedTypeReference<>() {});
   }
 
   public List<LanguageRestDto> getLanguages(Integer limit, Integer offset) {
@@ -58,7 +58,7 @@ public class CountriesRestClient {
   public List<CountryRestDto> getCountries(Integer limit, Integer offset) {
     return get(
         "/countries",
-        "region,name,latlng,numericCode,alpha2Code,alpha3Code,languages,currencies",
+        "region,name,latlng,numericCode,alpha2Code,alpha3Code,languages,currencies,timezones",
         "numericCode",
         limit,
         offset,

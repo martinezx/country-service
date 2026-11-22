@@ -31,6 +31,8 @@ public class CountryModelAssembler
         linkTo(methodOn(CountryController.class).currencies(country.id(), null, null))
             .withRel(LinkRels.CURRENCIES),
         linkTo(methodOn(CountryController.class).languages(country.id(), null, null))
-            .withRel(LinkRels.LANGUAGES));
+            .withRel(LinkRels.LANGUAGES),
+        linkTo(methodOn(CountryController.class).timezones(country.id(), null, null))
+            .withRel(LinkRels.TIMEZONES));
   }
 }

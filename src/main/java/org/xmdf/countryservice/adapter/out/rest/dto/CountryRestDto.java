@@ -10,4 +10,5 @@ public record CountryRestDto(
     String alpha2Code,
     String alpha3Code,
     List<LanguageRestDto> languages,
-    List<CurrencyRestDto> currencies) {}
+    List<CurrencyRestDto> currencies,
+    List<String> timezones) {}

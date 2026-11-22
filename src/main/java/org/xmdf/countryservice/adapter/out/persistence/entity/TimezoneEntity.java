@@ -16,4 +16,10 @@ public class TimezoneEntity extends BaseEntity {
 
   @Column(nullable = false)
   private String timezone;
+
+  @Column(nullable = false)
+  private String utcOffset;
+
+  @Column(nullable = false)
+  private Integer utcOffsetMinutes;
 }

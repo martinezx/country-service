@@ -110,7 +110,8 @@ class CountriesRestClientTest {
                 [{"region":"Asia","name":"Afghanistan","latlng":[33,65],"numericCode":"004",
                   "alpha2Code":"AF","alpha3Code":"AFG",
                   "languages":[{"name":"Pashto","iso639_1":"ps","iso639_2":"pus","nativeName":"پښتو"}],
-                  "currencies":[{"code":"AFN","name":"Afghan afghani","symbol":"؋"}]}]
+                  "currencies":[{"code":"AFN","name":"Afghan afghani","symbol":"؋"}],
+                  "timezones":["UTC+04:30"]}]
                 """,
                 MediaType.APPLICATION_JSON));
 
@@ -126,13 +127,14 @@ class CountriesRestClientTest {
                 "AF",
                 "AFG",
                 List.of(new LanguageRestDto("Pashto", "ps", "pus")),
-                List.of(new CurrencyRestDto("AFN", "Afghan afghani", "؋"))));
+                List.of(new CurrencyRestDto("AFN", "Afghan afghani", "؋")),
+                List.of("UTC+04:30")));
   }
 
   @Test
   void serverError_isUnavailable() {
     server
-        .expect(ExpectedCount.times(3), requestTo(BASE_URL + "/timezones"))
+        .expect(ExpectedCount.times(3), requestTo(BASE_URL + "/timezones?fields=timezone"))
         .andRespond(withServerError());
 
     assertThatExceptionOfType(CountriesApiUnavailableException.class)
@@ -142,7 +144,7 @@ class CountriesRestClientTest {
   @Test
   void tooManyRequests_isUnavailable() {
     server
-        .expect(ExpectedCount.times(3), requestTo(BASE_URL + "/timezones"))
+        .expect(ExpectedCount.times(3), requestTo(BASE_URL + "/timezones?fields=timezone"))
         .andRespond(withStatus(HttpStatus.TOO_MANY_REQUESTS));
 
     assertThatExceptionOfType(CountriesApiUnavailableException.class)
@@ -153,7 +155,7 @@ class CountriesRestClientTest {
   void ioFailure_isUnavailable() {
     for (int attempt = 0; attempt < 3; attempt++) {
       server
-          .expect(requestTo(BASE_URL + "/timezones"))
+          .expect(requestTo(BASE_URL + "/timezones?fields=timezone"))
           .andRespond(request -> {
             throw new IOException("connection reset");
           });
@@ -165,7 +167,7 @@ class CountriesRestClientTest {
 
   @Test
   void notFound_isRequestExceptionCarryingStatus() {
-    server.expect(requestTo(BASE_URL + "/timezones")).andRespond(withResourceNotFound());
+    server.expect(requestTo(BASE_URL + "/timezones?fields=timezone")).andRespond(withResourceNotFound());
 
     assertThatExceptionOfType(CountriesApiRequestException.class)
         .isThrownBy(() -> client.getTimezones())
@@ -175,7 +177,7 @@ class CountriesRestClientTest {
   @Test
   void malformedBody_isResponseException() {
     server
-        .expect(requestTo(BASE_URL + "/timezones"))
+        .expect(requestTo(BASE_URL + "/timezones?fields=timezone"))
         .andRespond(withSuccess("{not json", MediaType.APPLICATION_JSON));
 
     assertThatExceptionOfType(CountriesApiResponseException.class)
@@ -195,14 +197,14 @@ class CountriesRestClientTest {
 
   @Test
   void transientFailures_areRetriedUntilSuccess() {
-    server.expect(requestTo(BASE_URL + "/timezones")).andRespond(withServerError());
+    server.expect(requestTo(BASE_URL + "/timezones?fields=timezone")).andRespond(withServerError());
     server
-        .expect(requestTo(BASE_URL + "/timezones"))
+        .expect(requestTo(BASE_URL + "/timezones?fields=timezone"))
         .andRespond(request -> {
           throw new IOException("connection reset");
         });
     server
-        .expect(requestTo(BASE_URL + "/timezones"))
+        .expect(requestTo(BASE_URL + "/timezones?fields=timezone"))
         .andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 
     assertThat(client.getTimezones()).isEmpty();
@@ -211,7 +213,7 @@ class CountriesRestClientTest {
   @Test
   void notFound_isNotRetried() {
     server
-        .expect(ExpectedCount.once(), requestTo(BASE_URL + "/timezones"))
+        .expect(ExpectedCount.once(), requestTo(BASE_URL + "/timezones?fields=timezone"))
         .andRespond(withResourceNotFound());
 
     assertThatExceptionOfType(CountriesApiRequestException.class)

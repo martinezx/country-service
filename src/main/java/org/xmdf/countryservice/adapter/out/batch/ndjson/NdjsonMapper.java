@@ -34,6 +34,26 @@ public interface NdjsonMapper {
   }
 
   /**
+   * Maps a timezone identifier to a timezone.
+   *
+   * @param timezone the identifier of the timezone
+   * @return the timezone
+   */
+  default Timezone toTimezone(String timezone) {
+    return new Timezone(null, timezone);
+  }
+
+  /**
+   * Maps a timezone to the identifier written in the line of a country file.
+   *
+   * @param timezone the timezone
+   * @return the identifier of the timezone
+   */
+  default String toIdentifier(Timezone timezone) {
+    return timezone.timezone();
+  }
+
+  /**
    * Maps a region to the line of a region file.
    *
    * @param region the region
@@ -67,7 +87,8 @@ public interface NdjsonMapper {
 
   /**
    * Maps a country to the line of a country file. The latitude and longitude are written as a list,
-   * or as null if the location is unknown, and the region is written as its name.
+   * or as null if the location is unknown, the region is written as its name, and the timezones
+   * as their identifiers.
    *
    * @param country the country
    * @return the line
@@ -116,7 +137,7 @@ public interface NdjsonMapper {
 
   /**
    * Maps the line of a country file to a country. The location list is split into latitude and
-   * longitude, and the region name is mapped to a region.
+   * longitude, and the region name and the timezone identifiers are mapped to objects.
    *
    * @param line the line
    * @return the country

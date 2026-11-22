@@ -22,5 +22,6 @@ public final class NdjsonRecords {
       String alpha2Code,
       String alpha3Code,
       List<LanguageLine> languages,
-      List<CurrencyLine> currencies) {}
+      List<CurrencyLine> currencies,
+      List<String> timezones) {}
 }

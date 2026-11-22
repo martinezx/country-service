@@ -14,13 +14,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.xmdf.countryservice.adapter.in.web.assembler.CountryModelAssembler;
 import org.xmdf.countryservice.adapter.in.web.assembler.PagedModels;
 import org.xmdf.countryservice.adapter.in.web.assembler.TimezoneModelAssembler;
+import org.xmdf.countryservice.adapter.in.web.model.CountryResponse;
 import org.xmdf.countryservice.adapter.in.web.model.TimezoneResponse;
 import org.xmdf.countryservice.adapter.in.web.openapi.ApiTags;
 import org.xmdf.countryservice.adapter.in.web.openapi.ItemResponses;
 import org.xmdf.countryservice.adapter.in.web.openapi.PageResponses;
 import org.xmdf.countryservice.adapter.in.web.paging.PageParameters;
+import org.xmdf.countryservice.application.port.in.CountryQueryUseCase;
 import org.xmdf.countryservice.application.port.in.TimezoneQueryUseCase;
 
 @RestController
@@ -31,11 +34,19 @@ import org.xmdf.countryservice.application.port.in.TimezoneQueryUseCase;
 public class TimezoneController {
 
   private final TimezoneQueryUseCase timezones;
-  private final TimezoneModelAssembler assembler;
+  private final CountryQueryUseCase countries;
+  private final TimezoneModelAssembler timezoneAssembler;
+  private final CountryModelAssembler countryAssembler;
 
-  public TimezoneController(TimezoneQueryUseCase timezones, TimezoneModelAssembler assembler) {
+  public TimezoneController(
+      TimezoneQueryUseCase timezones,
+      CountryQueryUseCase countries,
+      TimezoneModelAssembler timezoneAssembler,
+      CountryModelAssembler countryAssembler) {
     this.timezones = timezones;
-    this.assembler = assembler;
+    this.countries = countries;
+    this.timezoneAssembler = timezoneAssembler;
+    this.countryAssembler = countryAssembler;
   }
 
   @Operation(operationId = "listTimezones", summary = "List timezones")
@@ -45,7 +56,7 @@ public class TimezoneController {
       @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
     return PagedModels.of(
         timezones.findAll(PageParameters.toQuery(page, size)),
-        assembler::toModel,
+        timezoneAssembler::toModel,
         (p, s) -> linkTo(methodOn(TimezoneController.class).list(p, s)).withSelfRel());
   }
 
@@ -53,6 +64,21 @@ public class TimezoneController {
   @GetMapping("/{id}")
   @ItemResponses
   public EntityModel<TimezoneResponse> get(@PathVariable Long id) {
-    return assembler.toModel(timezones.getById(id));
+    return timezoneAssembler.toModel(timezones.getById(id));
+  }
+
+  @Operation(
+      operationId = "listTimezoneCountries",
+      summary = "List the countries that use a timezone")
+  @GetMapping("/{id}/countries")
+  @ItemResponses
+  public PagedModel<EntityModel<CountryResponse>> countries(
+      @PathVariable Long id,
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer size) {
+    return PagedModels.of(
+        countries.findByTimezone(id, PageParameters.toQuery(page, size)),
+        countryAssembler::toModel,
+        (p, s) -> linkTo(methodOn(TimezoneController.class).countries(id, p, s)).withSelfRel());
   }
 }

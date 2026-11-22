@@ -1,6 +1,7 @@
 package org.xmdf.countryservice.adapter.in.web.assembler;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.xmdf.countryservice.adapter.in.web.model.CountryResponse;
 import org.xmdf.countryservice.adapter.in.web.model.CurrencyResponse;
 import org.xmdf.countryservice.adapter.in.web.model.LanguageResponse;
@@ -30,6 +31,8 @@ interface WebMapper {
    * @param timezone the timezone
    * @return the representation
    */
+  @Mapping(target = "utcOffset", expression = "java(timezone.utcOffset())")
+  @Mapping(target = "utcOffsetMinutes", expression = "java(timezone.utcOffsetMinutes())")
   TimezoneResponse toResponse(Timezone timezone);
 
   /**

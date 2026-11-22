@@ -54,4 +54,17 @@ class TimezoneRepositoryAdapter implements TimezoneRepository {
   public Optional<Timezone> findById(Long id) {
     return jpa.findById(id).map(mapper::toDomain);
   }
+
+  @Override
+  public boolean existsById(Long id) {
+    return jpa.existsById(id);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Timezone> findByCountryId(Long countryId, PageQuery query) {
+    return PagedResults.of(
+        jpa.findByCountryId(countryId, PageRequest.of(query.page(), query.size())),
+        mapper::toDomain);
+  }
 }

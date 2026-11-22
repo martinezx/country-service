@@ -33,6 +33,16 @@ interface CountriesRestMapper {
   }
 
   /**
+   * Maps a timezone identifier to a timezone.
+   *
+   * @param timezone the identifier of the timezone
+   * @return the timezone
+   */
+  default Timezone toTimezone(String timezone) {
+    return new Timezone(null, timezone);
+  }
+
+  /**
    * Maps timezone responses to timezones.
    *
    * @param timezones the timezone responses

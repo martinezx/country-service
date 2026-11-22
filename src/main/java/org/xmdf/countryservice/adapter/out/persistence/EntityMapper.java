@@ -30,11 +30,13 @@ interface EntityMapper {
   void update(Region region, @MappingTarget RegionEntity entity);
 
   /**
-   * Copies a timezone onto an entity.
+   * Copies a timezone onto an entity, including its offset from UTC.
    *
    * @param timezone the timezone to copy from
    * @param entity the entity to update
    */
+  @Mapping(target = "utcOffset", expression = "java(timezone.utcOffset())")
+  @Mapping(target = "utcOffsetMinutes", expression = "java(timezone.utcOffsetMinutes())")
   void update(Timezone timezone, @MappingTarget TimezoneEntity entity);
 
   /**
@@ -54,8 +56,9 @@ interface EntityMapper {
   void update(Language language, @MappingTarget LanguageEntity entity);
 
   /**
-   * Copies the values of a country onto an entity. The region, currencies and languages are
-   * references to other entities, so they are not copied and must be set by the caller.
+   * Copies the values of a country onto an entity. The region, currencies, languages and
+   * timezones are references to other entities, so they are not copied and must be set by the
+   * caller.
    *
    * @param country the country to copy from
    * @param entity the entity to update
@@ -63,6 +66,7 @@ interface EntityMapper {
   @Mapping(target = "region", ignore = true)
   @Mapping(target = "currencies", ignore = true)
   @Mapping(target = "languages", ignore = true)
+  @Mapping(target = "timezones", ignore = true)
   void update(Country country, @MappingTarget CountryEntity entity);
 
   /**

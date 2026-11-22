@@ -12,14 +12,23 @@ import org.xmdf.countryservice.adapter.out.persistence.entity.CountryEntity;
 public interface CountryJpaRepository extends JpaRepository<CountryEntity, Long> {
 
   /**
-   * Finds the countries with one of the given alpha-2 codes. The currencies and languages of each
-   * country are loaded together with it.
+   * Finds the countries with one of the given alpha-2 codes. The currencies, languages and
+   * timezones of each country are loaded together with it.
    *
    * @param alpha2Codes the alpha-2 codes to look for
    * @return the matching countries, empty if there are none
    */
-  @EntityGraph(attributePaths = {"currencies", "languages"})
+  @EntityGraph(attributePaths = {"currencies", "languages", "timezones"})
   List<CountryEntity> findByAlpha2CodeIn(Collection<String> alpha2Codes);
+
+  /**
+   * Finds the countries that use a timezone.
+   *
+   * @param timezoneId the identifier of the timezone
+   * @param pageable the page to return, including its sort order
+   * @return the requested page of countries
+   */
+  Page<CountryEntity> findByTimezonesId(Long timezoneId, Pageable pageable);
 
   /**
    * Finds the countries in a region.

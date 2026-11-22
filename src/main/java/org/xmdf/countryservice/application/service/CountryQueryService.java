@@ -9,6 +9,7 @@ import org.xmdf.countryservice.application.port.out.CountryRepository;
 import org.xmdf.countryservice.application.port.out.CurrencyRepository;
 import org.xmdf.countryservice.application.port.out.LanguageRepository;
 import org.xmdf.countryservice.application.port.out.RegionRepository;
+import org.xmdf.countryservice.application.port.out.TimezoneRepository;
 import org.xmdf.countryservice.domain.Country;
 
 @Service
@@ -18,16 +19,19 @@ public class CountryQueryService implements CountryQueryUseCase {
   private final RegionRepository regions;
   private final CurrencyRepository currencies;
   private final LanguageRepository languages;
+  private final TimezoneRepository timezones;
 
   public CountryQueryService(
       CountryRepository countries,
       RegionRepository regions,
       CurrencyRepository currencies,
-      LanguageRepository languages) {
+      LanguageRepository languages,
+      TimezoneRepository timezones) {
     this.countries = countries;
     this.regions = regions;
     this.currencies = currencies;
     this.languages = languages;
+    this.timezones = timezones;
   }
 
   @Override
@@ -46,6 +50,14 @@ public class CountryQueryService implements CountryQueryUseCase {
       throw new ResourceNotFoundException("Region", regionId);
     }
     return countries.findByRegionId(regionId, query);
+  }
+
+  @Override
+  public PagedResult<Country> findByTimezone(Long timezoneId, PageQuery query) {
+    if (!timezones.existsById(timezoneId)) {
+      throw new ResourceNotFoundException("Timezone", timezoneId);
+    }
+    return countries.findByTimezoneId(timezoneId, query);
   }
 
   @Override

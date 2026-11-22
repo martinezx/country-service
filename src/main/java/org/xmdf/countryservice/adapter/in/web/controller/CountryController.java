@@ -18,9 +18,11 @@ import org.xmdf.countryservice.adapter.in.web.assembler.CountryModelAssembler;
 import org.xmdf.countryservice.adapter.in.web.assembler.CurrencyModelAssembler;
 import org.xmdf.countryservice.adapter.in.web.assembler.LanguageModelAssembler;
 import org.xmdf.countryservice.adapter.in.web.assembler.PagedModels;
+import org.xmdf.countryservice.adapter.in.web.assembler.TimezoneModelAssembler;
 import org.xmdf.countryservice.adapter.in.web.model.CountryResponse;
 import org.xmdf.countryservice.adapter.in.web.model.CurrencyResponse;
 import org.xmdf.countryservice.adapter.in.web.model.LanguageResponse;
+import org.xmdf.countryservice.adapter.in.web.model.TimezoneResponse;
 import org.xmdf.countryservice.adapter.in.web.openapi.ApiTags;
 import org.xmdf.countryservice.adapter.in.web.openapi.ItemResponses;
 import org.xmdf.countryservice.adapter.in.web.openapi.PageResponses;
@@ -28,6 +30,7 @@ import org.xmdf.countryservice.adapter.in.web.paging.PageParameters;
 import org.xmdf.countryservice.application.port.in.CountryQueryUseCase;
 import org.xmdf.countryservice.application.port.in.CurrencyQueryUseCase;
 import org.xmdf.countryservice.application.port.in.LanguageQueryUseCase;
+import org.xmdf.countryservice.application.port.in.TimezoneQueryUseCase;
 
 @RestController
 @Tag(name = ApiTags.COUNTRIES)
@@ -39,23 +42,29 @@ public class CountryController {
   private final CountryQueryUseCase countries;
   private final CurrencyQueryUseCase currencies;
   private final LanguageQueryUseCase languages;
+  private final TimezoneQueryUseCase timezones;
   private final CountryModelAssembler countryAssembler;
   private final CurrencyModelAssembler currencyAssembler;
   private final LanguageModelAssembler languageAssembler;
+  private final TimezoneModelAssembler timezoneAssembler;
 
   public CountryController(
       CountryQueryUseCase countries,
       CurrencyQueryUseCase currencies,
       LanguageQueryUseCase languages,
+      TimezoneQueryUseCase timezones,
       CountryModelAssembler countryAssembler,
       CurrencyModelAssembler currencyAssembler,
-      LanguageModelAssembler languageAssembler) {
+      LanguageModelAssembler languageAssembler,
+      TimezoneModelAssembler timezoneAssembler) {
     this.countries = countries;
     this.currencies = currencies;
     this.languages = languages;
+    this.timezones = timezones;
     this.countryAssembler = countryAssembler;
     this.currencyAssembler = currencyAssembler;
     this.languageAssembler = languageAssembler;
+    this.timezoneAssembler = timezoneAssembler;
   }
 
   @Operation(operationId = "listCountries", summary = "List countries")
@@ -104,5 +113,20 @@ public class CountryController {
         languages.findByCountry(id, PageParameters.toQuery(page, size)),
         languageAssembler::toModel,
         (p, s) -> linkTo(methodOn(CountryController.class).languages(id, p, s)).withSelfRel());
+  }
+
+  @Operation(
+      operationId = "listCountryTimezones",
+      summary = "List the timezones of a country")
+  @GetMapping("/{id}/timezones")
+  @ItemResponses
+  public PagedModel<EntityModel<TimezoneResponse>> timezones(
+      @PathVariable Long id,
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer size) {
+    return PagedModels.of(
+        timezones.findByCountry(id, PageParameters.toQuery(page, size)),
+        timezoneAssembler::toModel,
+        (p, s) -> linkTo(methodOn(CountryController.class).timezones(id, p, s)).withSelfRel());
   }
 }

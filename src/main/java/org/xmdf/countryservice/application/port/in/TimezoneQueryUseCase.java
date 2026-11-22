@@ -24,4 +24,14 @@ public interface TimezoneQueryUseCase {
    * @throws ResourceNotFoundException if there is no timezone with that identifier
    */
   Timezone getById(Long id);
+
+  /**
+   * Returns a page of the timezones of a country.
+   *
+   * @param countryId the identifier of the country
+   * @param query the page to return
+   * @return the page, with the timezones ordered by their identifier
+   * @throws ResourceNotFoundException if there is no country with that identifier
+   */
+  PagedResult<Timezone> findByCountry(Long countryId, PageQuery query);
 }

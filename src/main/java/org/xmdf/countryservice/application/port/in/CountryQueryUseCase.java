@@ -36,6 +36,16 @@ public interface CountryQueryUseCase {
   PagedResult<Country> findByRegion(Long regionId, PageQuery query);
 
   /**
+   * Returns a page of the countries that use a timezone.
+   *
+   * @param timezoneId the identifier of the timezone
+   * @param query the page to return
+   * @return the page, with the countries ordered by alpha-2 code
+   * @throws ResourceNotFoundException if there is no timezone with that identifier
+   */
+  PagedResult<Country> findByTimezone(Long timezoneId, PageQuery query);
+
+  /**
    * Returns a page of the countries that use a currency.
    *
    * @param currencyId the identifier of the currency

@@ -34,4 +34,22 @@ public interface TimezoneRepository {
    * @return the timezone, or empty if there is none with that identifier
    */
   Optional<Timezone> findById(Long id);
+
+  /**
+   * Tells whether a timezone with the given identifier exists.
+   *
+   * @param id the identifier of the timezone
+   * @return true if the timezone exists
+   */
+  boolean existsById(Long id);
+
+  /**
+   * Finds a page of the timezones of a country.
+   *
+   * @param countryId the identifier of the country
+   * @param query the page to return
+   * @return the page, with the timezones ordered by their identifier. It is empty if the country
+   *     does not exist or has no timezones.
+   */
+  PagedResult<Timezone> findByCountryId(Long countryId, PageQuery query);
 }

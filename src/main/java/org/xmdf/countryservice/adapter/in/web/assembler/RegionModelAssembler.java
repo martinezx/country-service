@@ -3,6 +3,8 @@ package org.xmdf.countryservice.adapter.in.web.assembler;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -11,14 +13,11 @@ import org.xmdf.countryservice.adapter.in.web.model.RegionResponse;
 import org.xmdf.countryservice.domain.Region;
 
 @Component
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class RegionModelAssembler
     implements RepresentationModelAssembler<Region, EntityModel<RegionResponse>> {
 
   private final WebMapper mapper;
-
-  RegionModelAssembler(WebMapper mapper) {
-    this.mapper = mapper;
-  }
 
   @Override
   public EntityModel<RegionResponse> toModel(Region region) {

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -21,13 +22,10 @@ import org.xmdf.countryservice.application.port.in.RefreshDataUseCase;
 @RestController
 @Tag(name = ApiTags.DATA_REFRESH)
 @RequestMapping(value = "/jobs/data-refresh", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class DataRefreshController {
 
   private final RefreshDataUseCase refreshData;
-
-  public DataRefreshController(RefreshDataUseCase refreshData) {
-    this.refreshData = refreshData;
-  }
 
   @Operation(
       operationId = "startDataRefresh",

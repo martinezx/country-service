@@ -1,5 +1,7 @@
 package org.xmdf.countryservice.adapter.out.batch;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -12,17 +14,12 @@ import org.xmdf.countryservice.application.model.RefreshExecution;
 import org.xmdf.countryservice.application.port.out.DataRefreshLauncher;
 
 @Component
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class BatchDataRefreshLauncher implements DataRefreshLauncher {
 
   private final JobLauncher jobLauncher;
   private final JobExplorer jobExplorer;
   private final Job dataRefreshJob;
-
-  BatchDataRefreshLauncher(JobLauncher jobLauncher, JobExplorer jobExplorer, Job dataRefreshJob) {
-    this.jobLauncher = jobLauncher;
-    this.jobExplorer = jobExplorer;
-    this.dataRefreshJob = dataRefreshJob;
-  }
 
   @Override
   public synchronized RefreshExecution start() {

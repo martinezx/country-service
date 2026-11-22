@@ -1,6 +1,8 @@
 package org.xmdf.countryservice.adapter.out.rest;
 
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.xmdf.countryservice.application.port.out.CountriesSource;
 import org.xmdf.countryservice.domain.Country;
@@ -10,15 +12,11 @@ import org.xmdf.countryservice.domain.Region;
 import org.xmdf.countryservice.domain.Timezone;
 
 @Component
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class CountriesRestAdapter implements CountriesSource {
 
   private final CountriesRestClient client;
   private final CountriesRestMapper mapper;
-
-  CountriesRestAdapter(CountriesRestClient client, CountriesRestMapper mapper) {
-    this.client = client;
-    this.mapper = mapper;
-  }
 
   @Override
   public List<Region> fetchRegions() {

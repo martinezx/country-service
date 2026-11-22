@@ -3,8 +3,10 @@ package org.xmdf.countryservice.adapter.out.rest;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 import org.xmdf.countryservice.adapter.out.rest.dto.CountryRestDto;
 import org.xmdf.countryservice.adapter.out.rest.dto.CurrencyRestDto;
 import org.xmdf.countryservice.adapter.out.rest.dto.LanguageRestDto;
@@ -19,7 +21,10 @@ import org.xmdf.countryservice.domain.Timezone;
  * Maps the countries.dev response types to the domain model. Missing lists are mapped to empty
  * lists, and identifiers are left null because the mapped objects have not been stored.
  */
-@Mapper(nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    unmappedTargetPolicy = ReportingPolicy.ERROR,
+    nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 interface CountriesRestMapper {
 
   /**

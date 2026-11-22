@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
@@ -31,23 +32,13 @@ import org.xmdf.countryservice.application.port.in.CurrencyQueryUseCase;
 @RequestMapping(
     value = "/currencies",
     produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_JSON_VALUE})
+@RequiredArgsConstructor
 public class CurrencyController {
 
   private final CurrencyQueryUseCase currencies;
   private final CountryQueryUseCase countries;
   private final CurrencyModelAssembler currencyAssembler;
   private final CountryModelAssembler countryAssembler;
-
-  public CurrencyController(
-      CurrencyQueryUseCase currencies,
-      CountryQueryUseCase countries,
-      CurrencyModelAssembler currencyAssembler,
-      CountryModelAssembler countryAssembler) {
-    this.currencies = currencies;
-    this.countries = countries;
-    this.currencyAssembler = currencyAssembler;
-    this.countryAssembler = countryAssembler;
-  }
 
   @Operation(operationId = "listCurrencies", summary = "List currencies")
   @GetMapping

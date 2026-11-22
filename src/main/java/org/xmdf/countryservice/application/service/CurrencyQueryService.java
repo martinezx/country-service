@@ -1,5 +1,6 @@
 package org.xmdf.countryservice.application.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.xmdf.countryservice.application.exception.ResourceNotFoundException;
 import org.xmdf.countryservice.application.model.PageQuery;
@@ -10,15 +11,11 @@ import org.xmdf.countryservice.application.port.out.CurrencyRepository;
 import org.xmdf.countryservice.domain.Currency;
 
 @Service
+@RequiredArgsConstructor
 public class CurrencyQueryService implements CurrencyQueryUseCase {
 
   private final CurrencyRepository currencies;
   private final CountryRepository countries;
-
-  public CurrencyQueryService(CurrencyRepository currencies, CountryRepository countries) {
-    this.currencies = currencies;
-    this.countries = countries;
-  }
 
   @Override
   public PagedResult<Currency> findAll(PageQuery query) {

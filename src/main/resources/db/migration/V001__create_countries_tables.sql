@@ -9,7 +9,7 @@ CREATE TABLE region
 
 CREATE TABLE timezone
 (
-    id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id                 BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     timezone           VARCHAR(32)              NOT NULL,
     utc_offset         VARCHAR(6)               NOT NULL,
     utc_offset_minutes INTEGER                  NOT NULL,

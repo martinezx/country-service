@@ -2,6 +2,8 @@ package org.xmdf.countryservice.adapter.in.web.assembler;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import org.xmdf.countryservice.adapter.in.web.model.CountryResponse;
 import org.xmdf.countryservice.adapter.in.web.model.CurrencyResponse;
 import org.xmdf.countryservice.adapter.in.web.model.LanguageResponse;
@@ -14,7 +16,9 @@ import org.xmdf.countryservice.domain.Region;
 import org.xmdf.countryservice.domain.Timezone;
 
 /** Maps domain objects to the representations returned by the API. */
-@Mapper
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    unmappedTargetPolicy = ReportingPolicy.ERROR)
 interface WebMapper {
 
   /**

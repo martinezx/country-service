@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
@@ -31,23 +32,13 @@ import org.xmdf.countryservice.application.port.in.LanguageQueryUseCase;
 @RequestMapping(
     value = "/languages",
     produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_JSON_VALUE})
+@RequiredArgsConstructor
 public class LanguageController {
 
   private final LanguageQueryUseCase languages;
   private final CountryQueryUseCase countries;
   private final LanguageModelAssembler languageAssembler;
   private final CountryModelAssembler countryAssembler;
-
-  public LanguageController(
-      LanguageQueryUseCase languages,
-      CountryQueryUseCase countries,
-      LanguageModelAssembler languageAssembler,
-      CountryModelAssembler countryAssembler) {
-    this.languages = languages;
-    this.countries = countries;
-    this.languageAssembler = languageAssembler;
-    this.countryAssembler = countryAssembler;
-  }
 
   @Operation(operationId = "listLanguages", summary = "List languages")
   @GetMapping

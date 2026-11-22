@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class NaturalKeyUpserter<D, E, K> {
 
   private final EntityManager entityManager;
@@ -17,21 +20,6 @@ class NaturalKeyUpserter<D, E, K> {
   private final Function<Collection<K>, List<E>> finder;
   private final Supplier<E> factory;
   private final BiConsumer<D, E> mapper;
-
-  NaturalKeyUpserter(
-      EntityManager entityManager,
-      Function<D, K> domainKey,
-      Function<E, K> entityKey,
-      Function<Collection<K>, List<E>> finder,
-      Supplier<E> factory,
-      BiConsumer<D, E> mapper) {
-    this.entityManager = entityManager;
-    this.domainKey = domainKey;
-    this.entityKey = entityKey;
-    this.finder = finder;
-    this.factory = factory;
-    this.mapper = mapper;
-  }
 
   void upsertAll(Collection<D> items) {
     Map<K, D> byKey = new LinkedHashMap<>();

@@ -1,6 +1,7 @@
 package org.xmdf.countryservice.application.service;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.xmdf.countryservice.application.exception.ResourceNotFoundException;
 import org.xmdf.countryservice.application.port.in.RegionQueryUseCase;
@@ -8,13 +9,10 @@ import org.xmdf.countryservice.application.port.out.RegionRepository;
 import org.xmdf.countryservice.domain.Region;
 
 @Service
+@RequiredArgsConstructor
 public class RegionQueryService implements RegionQueryUseCase {
 
   private final RegionRepository regions;
-
-  public RegionQueryService(RegionRepository regions) {
-    this.regions = regions;
-  }
 
   @Override
   public List<Region> findAll() {

@@ -6,27 +6,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.xmdf.countryservice.application.exception.InvalidRecordException;
 
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class StoreItemWriter<L, D> implements ItemWriter<JsonNode> {
 
   private final ObjectMapper objectMapper;
   private final Class<L> lineType;
   private final Function<L, D> toDomain;
   private final Consumer<List<D>> store;
-
-  StoreItemWriter(
-      ObjectMapper objectMapper,
-      Class<L> lineType,
-      Function<L, D> toDomain,
-      Consumer<List<D>> store) {
-    this.objectMapper = objectMapper;
-    this.lineType = lineType;
-    this.toDomain = toDomain;
-    this.store = store;
-  }
 
   @Override
   public void write(Chunk<? extends JsonNode> chunk) {

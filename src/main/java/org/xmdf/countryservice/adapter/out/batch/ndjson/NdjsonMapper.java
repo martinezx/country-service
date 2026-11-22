@@ -3,8 +3,10 @@ package org.xmdf.countryservice.adapter.out.batch.ndjson;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 import org.xmdf.countryservice.adapter.out.batch.ndjson.NdjsonRecords.CountryLine;
 import org.xmdf.countryservice.adapter.out.batch.ndjson.NdjsonRecords.CurrencyLine;
 import org.xmdf.countryservice.adapter.out.batch.ndjson.NdjsonRecords.LanguageLine;
@@ -20,7 +22,10 @@ import org.xmdf.countryservice.domain.Timezone;
  * Maps between the domain model and the lines of the ndjson files. Missing lists are mapped to
  * empty lists, and identifiers are left null because the mapped objects have not been stored.
  */
-@Mapper(nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    unmappedTargetPolicy = ReportingPolicy.ERROR,
+    nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
 public interface NdjsonMapper {
 
   /**
@@ -87,8 +92,8 @@ public interface NdjsonMapper {
 
   /**
    * Maps a country to the line of a country file. The latitude and longitude are written as a list,
-   * or as null if the location is unknown, the region is written as its name, and the timezones
-   * as their identifiers.
+   * or as null if the location is unknown, the region is written as its name, and the timezones as
+   * their identifiers.
    *
    * @param country the country
    * @return the line

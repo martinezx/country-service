@@ -1,5 +1,6 @@
 package org.xmdf.countryservice.application.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.xmdf.countryservice.application.exception.ResourceNotFoundException;
 import org.xmdf.countryservice.application.model.PageQuery;
@@ -13,6 +14,7 @@ import org.xmdf.countryservice.application.port.out.TimezoneRepository;
 import org.xmdf.countryservice.domain.Country;
 
 @Service
+@RequiredArgsConstructor
 public class CountryQueryService implements CountryQueryUseCase {
 
   private final CountryRepository countries;
@@ -20,19 +22,6 @@ public class CountryQueryService implements CountryQueryUseCase {
   private final CurrencyRepository currencies;
   private final LanguageRepository languages;
   private final TimezoneRepository timezones;
-
-  public CountryQueryService(
-      CountryRepository countries,
-      RegionRepository regions,
-      CurrencyRepository currencies,
-      LanguageRepository languages,
-      TimezoneRepository timezones) {
-    this.countries = countries;
-    this.regions = regions;
-    this.currencies = currencies;
-    this.languages = languages;
-    this.timezones = timezones;
-  }
 
   @Override
   public PagedResult<Country> findAll(PageQuery query) {

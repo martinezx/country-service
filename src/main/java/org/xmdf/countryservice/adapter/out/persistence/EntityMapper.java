@@ -2,7 +2,9 @@ package org.xmdf.countryservice.adapter.out.persistence;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 import org.xmdf.countryservice.adapter.out.persistence.entity.CountryEntity;
 import org.xmdf.countryservice.adapter.out.persistence.entity.CurrencyEntity;
 import org.xmdf.countryservice.adapter.out.persistence.entity.LanguageEntity;
@@ -18,7 +20,9 @@ import org.xmdf.countryservice.domain.Timezone;
  * Maps between domain objects and JPA entities. Entities are updated in place, so that Hibernate
  * can detect which ones actually changed.
  */
-@Mapper
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    unmappedTargetPolicy = ReportingPolicy.ERROR)
 interface EntityMapper {
 
   /**
@@ -56,9 +60,8 @@ interface EntityMapper {
   void update(Language language, @MappingTarget LanguageEntity entity);
 
   /**
-   * Copies the values of a country onto an entity. The region, currencies, languages and
-   * timezones are references to other entities, so they are not copied and must be set by the
-   * caller.
+   * Copies the values of a country onto an entity. The region, currencies, languages and timezones
+   * are references to other entities, so they are not copied and must be set by the caller.
    *
    * @param country the country to copy from
    * @param entity the entity to update

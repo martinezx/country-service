@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.lang.Nullable;
 
+@RequiredArgsConstructor
 public class CountriesSourceItemReader implements ItemReader<JsonNode> {
 
   private final BiFunction<Integer, Integer, List<?>> fetcher;
@@ -18,17 +20,6 @@ public class CountriesSourceItemReader implements ItemReader<JsonNode> {
   private Iterator<?> current;
   private int offset;
   private boolean exhausted;
-
-  public CountriesSourceItemReader(
-      BiFunction<Integer, Integer, List<?>> fetcher,
-      ObjectMapper objectMapper,
-      boolean paged,
-      int pageSize) {
-    this.fetcher = fetcher;
-    this.objectMapper = objectMapper;
-    this.paged = paged;
-    this.pageSize = pageSize;
-  }
 
   @Override
   @Nullable

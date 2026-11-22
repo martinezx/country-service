@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -34,6 +36,7 @@ import org.xmdf.countryservice.domain.Language;
 import org.xmdf.countryservice.domain.Timezone;
 
 @Repository
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class CountryRepositoryAdapter implements CountryRepository {
 
   private final EntityManager entityManager;
@@ -43,23 +46,6 @@ class CountryRepositoryAdapter implements CountryRepository {
   private final CurrencyJpaRepository currencies;
   private final LanguageJpaRepository languages;
   private final TimezoneJpaRepository timezones;
-
-  CountryRepositoryAdapter(
-      EntityManager entityManager,
-      EntityMapper mapper,
-      CountryJpaRepository countries,
-      RegionJpaRepository regions,
-      CurrencyJpaRepository currencies,
-      LanguageJpaRepository languages,
-      TimezoneJpaRepository timezones) {
-    this.entityManager = entityManager;
-    this.mapper = mapper;
-    this.countries = countries;
-    this.regions = regions;
-    this.currencies = currencies;
-    this.languages = languages;
-    this.timezones = timezones;
-  }
 
   @Override
   @Transactional

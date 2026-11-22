@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
@@ -31,23 +32,13 @@ import org.xmdf.countryservice.application.port.in.RegionQueryUseCase;
 @RequestMapping(
     value = "/regions",
     produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_JSON_VALUE})
+@RequiredArgsConstructor
 public class RegionController {
 
   private final RegionQueryUseCase regions;
   private final CountryQueryUseCase countries;
   private final RegionModelAssembler regionAssembler;
   private final CountryModelAssembler countryAssembler;
-
-  public RegionController(
-      RegionQueryUseCase regions,
-      CountryQueryUseCase countries,
-      RegionModelAssembler regionAssembler,
-      CountryModelAssembler countryAssembler) {
-    this.regions = regions;
-    this.countries = countries;
-    this.regionAssembler = regionAssembler;
-    this.countryAssembler = countryAssembler;
-  }
 
   @Operation(operationId = "listRegions", summary = "List regions")
   @GetMapping

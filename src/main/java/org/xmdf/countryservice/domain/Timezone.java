@@ -19,8 +19,8 @@ public record Timezone(Long id, String timezone) {
    *
    * @return the offset in minutes, for example 330 for {@code UTC+05:30} and -720 for {@code
    *     UTC-12:00}
-   * @throws UnsupportedTimezoneException if the identifier does not have the form {@code UTC}
-   *     or {@code UTC±HH:MM}
+   * @throws UnsupportedTimezoneException if the identifier does not have the form {@code UTC} or
+   *     {@code UTC±HH:MM}
    */
   public int utcOffsetMinutes() {
     Matcher matcher = IDENTIFIER.matcher(timezone);
@@ -44,8 +44,8 @@ public record Timezone(Long id, String timezone) {
    *
    * @return the offset in the form {@code +HH:MM} or {@code -HH:MM}, with {@code +00:00} for no
    *     offset
-   * @throws UnsupportedTimezoneException if the identifier does not have the form {@code UTC}
-   *     or {@code UTC±HH:MM}
+   * @throws UnsupportedTimezoneException if the identifier does not have the form {@code UTC} or
+   *     {@code UTC±HH:MM}
    */
   public String utcOffset() {
     int minutes = utcOffsetMinutes();

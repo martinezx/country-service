@@ -167,7 +167,9 @@ class CountriesRestClientTest {
 
   @Test
   void notFound_isRequestExceptionCarryingStatus() {
-    server.expect(requestTo(BASE_URL + "/timezones?fields=timezone")).andRespond(withResourceNotFound());
+    server
+        .expect(requestTo(BASE_URL + "/timezones?fields=timezone"))
+        .andRespond(withResourceNotFound());
 
     assertThatExceptionOfType(CountriesApiRequestException.class)
         .isThrownBy(() -> client.getTimezones())

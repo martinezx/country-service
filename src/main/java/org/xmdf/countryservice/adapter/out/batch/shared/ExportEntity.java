@@ -1,5 +1,12 @@
 package org.xmdf.countryservice.adapter.out.batch.shared;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
+
+@Getter
+@Accessors(fluent = true)
+@RequiredArgsConstructor
 public enum ExportEntity {
   REGION("region.ndjson", false),
   TIMEZONE("timezone.ndjson", false),
@@ -9,17 +16,4 @@ public enum ExportEntity {
 
   private final String fileName;
   private final boolean chunked;
-
-  ExportEntity(String fileName, boolean chunked) {
-    this.fileName = fileName;
-    this.chunked = chunked;
-  }
-
-  public String fileName() {
-    return fileName;
-  }
-
-  public boolean chunked() {
-    return chunked;
-  }
 }

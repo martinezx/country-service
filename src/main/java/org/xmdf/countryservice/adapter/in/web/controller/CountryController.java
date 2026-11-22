@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
@@ -37,6 +38,7 @@ import org.xmdf.countryservice.application.port.in.TimezoneQueryUseCase;
 @RequestMapping(
     value = "/countries",
     produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_JSON_VALUE})
+@RequiredArgsConstructor
 public class CountryController {
 
   private final CountryQueryUseCase countries;
@@ -47,25 +49,6 @@ public class CountryController {
   private final CurrencyModelAssembler currencyAssembler;
   private final LanguageModelAssembler languageAssembler;
   private final TimezoneModelAssembler timezoneAssembler;
-
-  public CountryController(
-      CountryQueryUseCase countries,
-      CurrencyQueryUseCase currencies,
-      LanguageQueryUseCase languages,
-      TimezoneQueryUseCase timezones,
-      CountryModelAssembler countryAssembler,
-      CurrencyModelAssembler currencyAssembler,
-      LanguageModelAssembler languageAssembler,
-      TimezoneModelAssembler timezoneAssembler) {
-    this.countries = countries;
-    this.currencies = currencies;
-    this.languages = languages;
-    this.timezones = timezones;
-    this.countryAssembler = countryAssembler;
-    this.currencyAssembler = currencyAssembler;
-    this.languageAssembler = languageAssembler;
-    this.timezoneAssembler = timezoneAssembler;
-  }
 
   @Operation(operationId = "listCountries", summary = "List countries")
   @GetMapping
@@ -115,9 +98,7 @@ public class CountryController {
         (p, s) -> linkTo(methodOn(CountryController.class).languages(id, p, s)).withSelfRel());
   }
 
-  @Operation(
-      operationId = "listCountryTimezones",
-      summary = "List the timezones of a country")
+  @Operation(operationId = "listCountryTimezones", summary = "List the timezones of a country")
   @GetMapping("/{id}/timezones")
   @ItemResponses
   public PagedModel<EntityModel<TimezoneResponse>> timezones(

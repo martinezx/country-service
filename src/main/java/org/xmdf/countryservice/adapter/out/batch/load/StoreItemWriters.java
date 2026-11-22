@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.xmdf.countryservice.adapter.out.batch.ndjson.NdjsonMapper;
 import org.xmdf.countryservice.adapter.out.batch.ndjson.NdjsonRecords.CountryLine;
@@ -19,6 +21,7 @@ import org.xmdf.countryservice.application.port.out.RegionRepository;
 import org.xmdf.countryservice.application.port.out.TimezoneRepository;
 
 @Component
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class StoreItemWriters {
 
   private final ObjectMapper objectMapper;
@@ -28,23 +31,6 @@ class StoreItemWriters {
   private final CurrencyRepository currencies;
   private final LanguageRepository languages;
   private final CountryRepository countries;
-
-  StoreItemWriters(
-      ObjectMapper objectMapper,
-      NdjsonMapper mapper,
-      RegionRepository regions,
-      TimezoneRepository timezones,
-      CurrencyRepository currencies,
-      LanguageRepository languages,
-      CountryRepository countries) {
-    this.objectMapper = objectMapper;
-    this.mapper = mapper;
-    this.regions = regions;
-    this.timezones = timezones;
-    this.currencies = currencies;
-    this.languages = languages;
-    this.countries = countries;
-  }
 
   StoreItemWriter<?, ?> forEntity(ExportEntity entity) {
     return switch (entity) {

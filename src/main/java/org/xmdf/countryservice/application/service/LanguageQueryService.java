@@ -1,5 +1,6 @@
 package org.xmdf.countryservice.application.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.xmdf.countryservice.application.exception.ResourceNotFoundException;
 import org.xmdf.countryservice.application.model.PageQuery;
@@ -10,15 +11,11 @@ import org.xmdf.countryservice.application.port.out.LanguageRepository;
 import org.xmdf.countryservice.domain.Language;
 
 @Service
+@RequiredArgsConstructor
 public class LanguageQueryService implements LanguageQueryUseCase {
 
   private final LanguageRepository languages;
   private final CountryRepository countries;
-
-  public LanguageQueryService(LanguageRepository languages, CountryRepository countries) {
-    this.languages = languages;
-    this.countries = countries;
-  }
 
   @Override
   public PagedResult<Language> findAll(PageQuery query) {

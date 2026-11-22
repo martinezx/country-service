@@ -2,6 +2,7 @@ package org.xmdf.countryservice.adapter.out.rest;
 
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import org.xmdf.countryservice.adapter.out.rest.exception.CountriesApiResponseEx
 import org.xmdf.countryservice.adapter.out.rest.exception.CountriesApiUnavailableException;
 
 @Component
+@RequiredArgsConstructor
 public class CountriesRestClient {
 
   private static final int DEFAULT_LIMIT = 20;
@@ -27,11 +29,6 @@ public class CountriesRestClient {
 
   private final RestClient restClient;
   private final RetryTemplate retryTemplate;
-
-  public CountriesRestClient(RestClient restClient, RetryTemplate retryTemplate) {
-    this.restClient = restClient;
-    this.retryTemplate = retryTemplate;
-  }
 
   public List<String> getRegions() {
     return get("/regions", null, null, null, null, new ParameterizedTypeReference<>() {});

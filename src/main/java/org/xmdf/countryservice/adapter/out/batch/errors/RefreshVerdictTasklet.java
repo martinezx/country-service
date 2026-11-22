@@ -6,6 +6,7 @@ import static org.xmdf.countryservice.adapter.out.batch.shared.StepNames.LOAD_RE
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -19,13 +20,10 @@ import org.xmdf.countryservice.adapter.out.batch.shared.BatchSettings;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RefreshVerdictTasklet implements Tasklet {
 
   private final BatchSettings settings;
-
-  public RefreshVerdictTasklet(BatchSettings settings) {
-    this.settings = settings;
-  }
 
   @Override
   public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {

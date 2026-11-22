@@ -15,6 +15,7 @@ import org.xmdf.countryservice.application.port.out.TimezoneRepository;
 import org.xmdf.countryservice.domain.Timezone;
 
 @Repository
+@Transactional(readOnly = true)
 class TimezoneRepositoryAdapter implements TimezoneRepository {
 
   private final TimezoneJpaRepository jpa;
@@ -42,7 +43,6 @@ class TimezoneRepositoryAdapter implements TimezoneRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Timezone> findAll(PageQuery query) {
     return PagedResults.of(
         jpa.findAll(PageRequest.of(query.page(), query.size(), Sort.by("timezone"))),
@@ -50,7 +50,6 @@ class TimezoneRepositoryAdapter implements TimezoneRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Timezone> findById(Long id) {
     return jpa.findById(id).map(mapper::toDomain);
   }
@@ -61,7 +60,6 @@ class TimezoneRepositoryAdapter implements TimezoneRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Timezone> findByCountryId(Long countryId, PageQuery query) {
     return PagedResults.of(
         jpa.findByCountryId(countryId, PageRequest.of(query.page(), query.size())),

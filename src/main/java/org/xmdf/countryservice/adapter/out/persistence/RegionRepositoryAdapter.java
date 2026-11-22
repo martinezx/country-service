@@ -13,6 +13,7 @@ import org.xmdf.countryservice.application.port.out.RegionRepository;
 import org.xmdf.countryservice.domain.Region;
 
 @Repository
+@Transactional(readOnly = true)
 class RegionRepositoryAdapter implements RegionRepository {
 
   private final RegionJpaRepository jpa;
@@ -40,13 +41,11 @@ class RegionRepositoryAdapter implements RegionRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<Region> findAll() {
     return jpa.findAll(Sort.by("name")).stream().map(mapper::toDomain).toList();
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Region> findById(Long id) {
     return jpa.findById(id).map(mapper::toDomain);
   }

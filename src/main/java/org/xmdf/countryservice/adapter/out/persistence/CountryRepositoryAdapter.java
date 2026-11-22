@@ -36,6 +36,7 @@ import org.xmdf.countryservice.domain.Language;
 import org.xmdf.countryservice.domain.Timezone;
 
 @Repository
+@Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class CountryRepositoryAdapter implements CountryRepository {
 
@@ -98,13 +99,11 @@ class CountryRepositoryAdapter implements CountryRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Country> findAll(PageQuery query) {
     return PagedResults.of(countries.findAll(pageRequest(query)), mapper::toDomain);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Country> findById(Long id) {
     return countries.findById(id).map(mapper::toDomain);
   }
@@ -115,28 +114,24 @@ class CountryRepositoryAdapter implements CountryRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Country> findByRegionId(Long regionId, PageQuery query) {
     return PagedResults.of(
         countries.findByRegionId(regionId, pageRequest(query)), mapper::toDomain);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Country> findByTimezoneId(Long timezoneId, PageQuery query) {
     return PagedResults.of(
         countries.findByTimezonesId(timezoneId, pageRequest(query)), mapper::toDomain);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Country> findByCurrencyId(Long currencyId, PageQuery query) {
     return PagedResults.of(
         countries.findByCurrenciesId(currencyId, pageRequest(query)), mapper::toDomain);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Country> findByLanguageId(Long languageId, PageQuery query) {
     return PagedResults.of(
         countries.findByLanguagesId(languageId, pageRequest(query)), mapper::toDomain);

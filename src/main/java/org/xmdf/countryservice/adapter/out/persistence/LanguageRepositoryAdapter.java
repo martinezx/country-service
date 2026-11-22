@@ -15,6 +15,7 @@ import org.xmdf.countryservice.application.port.out.LanguageRepository;
 import org.xmdf.countryservice.domain.Language;
 
 @Repository
+@Transactional(readOnly = true)
 class LanguageRepositoryAdapter implements LanguageRepository {
 
   private final LanguageJpaRepository jpa;
@@ -42,7 +43,6 @@ class LanguageRepositoryAdapter implements LanguageRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Language> findAll(PageQuery query) {
     return PagedResults.of(
         jpa.findAll(PageRequest.of(query.page(), query.size(), Sort.by("iso6392"))),
@@ -50,7 +50,6 @@ class LanguageRepositoryAdapter implements LanguageRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Language> findById(Long id) {
     return jpa.findById(id).map(mapper::toDomain);
   }
@@ -61,7 +60,6 @@ class LanguageRepositoryAdapter implements LanguageRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Language> findByCountryId(Long countryId, PageQuery query) {
     return PagedResults.of(
         jpa.findByCountryId(countryId, PageRequest.of(query.page(), query.size())),

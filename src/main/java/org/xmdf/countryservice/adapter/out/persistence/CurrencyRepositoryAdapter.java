@@ -15,6 +15,7 @@ import org.xmdf.countryservice.application.port.out.CurrencyRepository;
 import org.xmdf.countryservice.domain.Currency;
 
 @Repository
+@Transactional(readOnly = true)
 class CurrencyRepositoryAdapter implements CurrencyRepository {
 
   private final CurrencyJpaRepository jpa;
@@ -42,14 +43,12 @@ class CurrencyRepositoryAdapter implements CurrencyRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Currency> findAll(PageQuery query) {
     return PagedResults.of(
         jpa.findAll(PageRequest.of(query.page(), query.size(), Sort.by("code"))), mapper::toDomain);
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<Currency> findById(Long id) {
     return jpa.findById(id).map(mapper::toDomain);
   }
@@ -60,7 +59,6 @@ class CurrencyRepositoryAdapter implements CurrencyRepository {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public PagedResult<Currency> findByCountryId(Long countryId, PageQuery query) {
     return PagedResults.of(
         jpa.findByCountryId(countryId, PageRequest.of(query.page(), query.size())),
